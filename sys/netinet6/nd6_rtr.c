@@ -1748,6 +1748,13 @@ prelist_update(struct nd_prefixctl *new, struct nd_defrouter *dr,
 			ia6->ia6_ndpr = pr;
 
 			/*
+			 * toggle onlink state if the address was assigned
+			 * a prefix route.
+			 */
+			if (ia6->ia_flags & IFA_ROUTE)
+				pr->ndpr_stateflags |= NDPRF_ONLINK;
+
+			/*
 			 * RFC 3041 3.3 (2).
 			 * When a new public address is created as described
 			 * in RFC2462, also create a new temporary address.
