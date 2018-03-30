@@ -421,9 +421,7 @@ in6_ifattach_linklocal(struct ifnet *ifp, struct ifnet *altifp)
 {
 	struct in6_ifaddr *ia;
 	struct in6_aliasreq ifra;
-	struct nd_prefixctl pr0;
 	struct epoch_tracker et;
-	struct nd_prefix *pr;
 	int error;
 
 	/*
@@ -488,44 +486,6 @@ in6_ifattach_linklocal(struct ifnet *ifp, struct ifnet *altifp)
 		return (-1);
 	}
 	ifa_free(&ia->ia_ifa);
-
-	/*
-	 * Make the link-local prefix (fe80::%link/64) as on-link.
-	 * Since we'd like to manage prefixes separately from addresses,
-	 * we make an ND6 prefix structure for the link-local prefix,
-	 * and add it to the prefix list as a never-expire prefix.
-	 * XXX: this change might affect some existing code base...
-	 */
-	bzero(&pr0, sizeof(pr0));
-	pr0.ndpr_ifp = ifp;
-	/* this should be 64 at this moment. */
-	pr0.ndpr_plen = in6_mask2len(&ifra.ifra_prefixmask.sin6_addr, NULL);
-	pr0.ndpr_prefix = ifra.ifra_addr;
-	/* apply the mask for safety. (nd6_prelist_add will apply it again) */
-	IN6_MASK_ADDR(&pr0.ndpr_prefix.sin6_addr, &in6mask64);
-	/*
-	 * Initialize parameters.  The link-local prefix must always be
-	 * on-link, and its lifetimes never expire.
-	 */
-	pr0.ndpr_raf_onlink = 1;
-	pr0.ndpr_raf_auto = 1;	/* probably meaningless */
-	pr0.ndpr_vltime = ND6_INFINITE_LIFETIME;
-	pr0.ndpr_pltime = ND6_INFINITE_LIFETIME;
-	/*
-	 * Since there is no other link-local addresses, nd6_prefix_lookup()
-	 * probably returns NULL.  However, we cannot always expect the result.
-	 * For example, if we first remove the (only) existing link-local
-	 * address, and then reconfigure another one, the prefix is still
-	 * valid with referring to the old link-local address.
-	 */
-	if ((pr = nd6_prefix_lookup(&pr0)) == NULL) {
-		if ((error = nd6_prelist_add(&pr0, NULL, &pr)) != 0)
-			return (error);
-		/* Reference prefix */
-		ia->ia6_ndpr = pr;
-		pr->ndpr_addrcnt++;
-	} else
-		nd6_prefix_rele(pr);
 
 	return 0;
 }
