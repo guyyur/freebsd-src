@@ -894,6 +894,8 @@ in6_update_ifa(struct ifnet *ifp, struct in6_aliasreq *ifra,
 
 	if (hostIsNew)
 		error = in6_broadcast_ifa(ifp, ifra, ia, flags);
+	else
+		rt_addrmsg(RTM_ADD, (struct ifaddr *)ia, 0);
 
 	return (error);
 }
