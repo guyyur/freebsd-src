@@ -1985,10 +1985,13 @@ restart:
 				if (ifa->ia6_flags & IN6_IFF_DETACHED) {
 					ifa->ia6_flags &= ~IN6_IFF_DETACHED;
 					ifa->ia6_flags |= IN6_IFF_TENTATIVE;
+					rt_addrmsg(RTM_ADD,
+					    (struct ifaddr *)ifa, 0);
 					nd6_dad_start((struct ifaddr *)ifa, 0);
 				}
-			} else {
+			} else if (!(ifa->ia6_flags & IN6_IFF_DETACHED)) {
 				ifa->ia6_flags |= IN6_IFF_DETACHED;
+				rt_addrmsg(RTM_ADD, (struct ifaddr *)ifa, 0);
 			}
 		}
 	} else {
@@ -1999,6 +2002,7 @@ restart:
 			if (ifa->ia6_flags & IN6_IFF_DETACHED) {
 				ifa->ia6_flags &= ~IN6_IFF_DETACHED;
 				ifa->ia6_flags |= IN6_IFF_TENTATIVE;
+				rt_addrmsg(RTM_ADD, (struct ifaddr *)ifa, 0);
 				/* Do we need a delay in this case? */
 				nd6_dad_start((struct ifaddr *)ifa, 0);
 			}
