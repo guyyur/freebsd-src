@@ -984,6 +984,8 @@ nd6_timer(void *arg)
 			int oldflags = ia6->ia6_flags;
 
 			ia6->ia6_flags |= IN6_IFF_DEPRECATED;
+			if (ia6->ia6_flags != oldflags)
+				rt_addrmsg(RTM_ADD, (struct ifaddr *)ia6, 0);
 
 			/*
 			 * If a temporary address has just become deprecated,
@@ -1020,6 +1022,8 @@ nd6_timer(void *arg)
 			    (MAX_RTR_SOLICITATION_DELAY * hz);
 			nd6_dad_start((struct ifaddr *)ia6, delay);
 		} else {
+			int oldflags = ia6->ia6_flags;
+
 			/*
 			 * Check status of the interface.  If it is down,
 			 * mark the address as tentative for future DAD.
@@ -1038,6 +1042,10 @@ nd6_timer(void *arg)
 			 * preferred.
 			 */
 			ia6->ia6_flags &= ~IN6_IFF_DEPRECATED;
+
+			/* Notify the routing socket of a flag change. */
+			if (ia6->ia6_flags != oldflags)
+				rt_addrmsg(RTM_ADD, (struct ifaddr *)ia6, 0);
 		}
 	}
 	NET_EPOCH_EXIT(et);
@@ -1744,6 +1752,12 @@ nd6_ioctl(u_long cmd, caddr_t data, struct ifnet *ifp)
 						continue;
 					ia = (struct in6_ifaddr *)ifa;
 					ia->ia6_flags |= IN6_IFF_TENTATIVE;
+					if (!(ia->ia6_flags &
+					    IN6_IFF_TENTATIVE)) {
+						ia->ia6_flags |=
+						    IN6_IFF_TENTATIVE;
+						rt_addrmsg(RTM_ADD, ifa, 0);
+					}
 				}
 				NET_EPOCH_EXIT(et);
 			}

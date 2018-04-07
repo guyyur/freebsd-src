@@ -1294,6 +1294,7 @@ nd6_dad_start(struct ifaddr *ifa, int delay)
 	    V_ip6_dad_count == 0 ||
 	    (ND_IFINFO(ifa->ifa_ifp)->flags & ND6_IFF_NO_DAD) != 0) {
 		ia->ia6_flags &= ~IN6_IFF_TENTATIVE;
+		rt_addrmsg(RTM_ADD, ifa, 0);
 		return;
 	}
 	if ((ifa->ifa_ifp->if_flags & IFF_UP) == 0 ||
@@ -1467,8 +1468,10 @@ nd6_dad_timer(void *arg)
 			 * again in case that it is changed between the
 			 * beginning of this function and here.
 			 */
-			if ((ND_IFINFO(ifp)->flags & ND6_IFF_IFDISABLED) == 0)
+			if ((ND_IFINFO(ifp)->flags & ND6_IFF_IFDISABLED) == 0) {
 				ia->ia6_flags &= ~IN6_IFF_TENTATIVE;
+				rt_addrmsg(RTM_ADD, ifa, 0);
+			}
 
 			nd6log((LOG_DEBUG,
 			    "%s: DAD complete for %s - no duplicates found\n",
@@ -1542,6 +1545,8 @@ nd6_dad_duplicated(struct ifaddr *ifa, struct dadq *dp)
 			break;
 		}
 	}
+
+	rt_addrmsg(RTM_ADD, ifa, 0);
 }
 
 /*
