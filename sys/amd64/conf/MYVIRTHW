@@ -1,0 +1,265 @@
+# based on: head/sys/amd64/conf/GENERIC e2b8fb2202c224bb9b0e0f3333d5be5343267e89
+
+cpu		HAMMER
+ident		MYVIRTHW
+
+makeoptions	DEBUG=-g		# Build kernel with gdb(1) debug symbols
+makeoptions	WITH_CTF=1		# Run ctfconvert(1) for DTrace support
+
+options 	SCHED_ULE		# ULE scheduler
+options 	PREEMPTION		# Enable kernel thread preemption
+options 	VIMAGE			# Subsystem virtualization, e.g. VNET
+options 	INET			# InterNETworking
+options 	INET6			# IPv6 communications protocols
+options 	FIB_ALGO		# Modular fib lookups
+options 	TCP_OFFLOAD		# TCP offload
+# options 	TCP_BLACKBOX		# Enhanced TCP event logging
+# options 	TCP_HHOOK		# hhook(9) framework for TCP
+options 	TCP_RFC7413		# TCP Fast Open
+options 	SCTP_SUPPORT		# Allow kldload of SCTP
+options 	KERN_TLS		# TLS transmit & receive offload
+options 	FFS			# Berkeley Fast Filesystem
+options 	SOFTUPDATES		# Enable FFS soft updates support
+options 	UFS_ACL			# Support for access control lists
+options 	UFS_DIRHASH		# Improve performance on big directories
+options 	NFSCL			# Network Filesystem Client
+options 	NFSD			# Network Filesystem Server
+options 	NFSLOCKD		# Network Lock Manager
+options 	MSDOSFS			# MSDOS Filesystem
+options 	CD9660			# ISO 9660 Filesystem
+options 	PROCFS			# Process filesystem (requires PSEUDOFS)
+options 	PSEUDOFS		# Pseudo-filesystem framework
+options 	TMPFS			# Efficient memory filesystem
+options 	GEOM_LABEL		# Provides labelization
+options 	EFIRT			# EFI Runtime Services support
+# options 	COMPAT_FREEBSD32	# Compatible with i386 binaries
+options 	COMPAT_FREEBSD11	# Compatible with FreeBSD11 (needed for librsvg2-rust)
+options 	COMPAT_FREEBSD12	# Compatible with FreeBSD12
+options 	COMPAT_FREEBSD13	# Compatible with FreeBSD13
+options 	SCSI_DELAY=5000		# Delay (in ms) before probing SCSI
+options 	KTRACE			# ktrace(1) support
+options 	STACK			# stack(9) support
+options 	SYSVSHM			# SYSV-style shared memory
+options 	SYSVMSG			# SYSV-style message queues
+options 	SYSVSEM			# SYSV-style semaphores
+options 	_KPOSIX_PRIORITY_SCHEDULING # POSIX P1003_1B real-time extensions
+options 	PRINTF_BUFR_SIZE=128	# Prevent printf output being interspersed.
+options 	KBD_INSTALL_CDEV	# install a CDEV entry in /dev
+options 	HWPMC_HOOKS		# Necessary kernel hooks for hwpmc(4)
+options 	AUDIT			# Security event auditing
+options 	CAPABILITY_MODE		# Capsicum capability mode
+options 	CAPABILITIES		# Capsicum capabilities
+options 	MAC			# TrustedBSD MAC Framework
+options 	KDTRACE_FRAME		# Ensure frames are compiled in
+options 	KDTRACE_HOOKS		# Kernel DTrace hooks
+options 	DDB_CTF			# Kernel ELF linker loads CTF data
+# options 	INCLUDE_CONFIG_FILE	# Include this file in kernel
+# options 	RACCT			# Resource accounting framework
+# options 	RACCT_DEFAULT_TO_DISABLED # Set kern.racct.enable=0 by default
+# options 	RCTL			# Resource limits
+
+# Debugging support.  Always need this:
+options 	KDB			# Enable kernel debugger support.
+options 	KDB_TRACE		# Print a stack trace for a panic.
+
+# Kernel Sanitizers
+#options 	COVERAGE		# Generic kernel coverage. Used by KCOV
+#options 	KCOV			# Kernel Coverage Sanitizer
+# Warning: KUBSAN can result in a kernel too large for loader to load
+#options 	KUBSAN			# Kernel Undefined Behavior Sanitizer
+#options 	KCSAN			# Kernel Concurrency Sanitizer
+
+# Kernel dump features.
+# options 	EKCD			# Support for encrypted kernel dumps
+options 	GZIO			# gzip-compressed kernel and user dumps
+options 	ZSTDIO			# zstd-compressed kernel and user dumps
+# options 	NETDUMP			# netdump(4) client support
+
+# Make an SMP-capable kernel by default
+options 	SMP			# Symmetric MultiProcessor Kernel
+
+# Bus support.
+device		acpi
+device		smbios
+options 	IOMMU
+device		pci
+options 	PCI_HP			# PCI-Express native HotPlug
+
+options 	COMPAT_LINUXKPI
+
+# Enable support for the kernel PLL to use an external PPS signal,
+# under supervision of [x]ntpd(8)
+# More info in ntpd documentation: http://www.eecis.udel.edu/~ntp
+
+options 	PPS_SYNC
+
+# ATA controllers
+device		ahci			# AHCI-compatible SATA controllers
+
+# SCSI Controllers
+# device		mpt			# LSI-Logic MPT-Fusion
+# device		pvscsi			# VMware PVSCSI
+
+# ATA/SCSI peripherals
+device		scbus			# SCSI bus (required for ATA/SCSI)
+device		da			# Direct Access (disks)
+device		cd			# CD
+device		pass			# Passthrough device (direct ATA/SCSI access)
+
+# atkbdc0 controls both the keyboard and the PS/2 mouse
+device		atkbdc			# AT keyboard controller
+device		atkbd			# AT keyboard
+device		psm			# PS/2 mouse
+
+device		kbdmux			# keyboard multiplexer
+
+# syscons is the legacy console driver, resembling an SCO console
+device		vga			# VGA video card driver
+device		splash			# Splash screen and screen saver support
+device		sc
+options 	SC_PIXEL_MODE		# add support for the raster text mode
+
+# vt is the default video console driver
+device		vt
+device		vt_vga
+device		vt_efifb
+device		vt_vbefb
+
+# Serial (COM) ports
+device		uart			# Generic UART driver
+
+# PCI/PCI-X/PCIe Ethernet NICs that use iflib infrastructure
+device		iflib
+device		em			# Intel PRO/1000 Gigabit Ethernet Family
+# device		vmx			# VMware VMXNET3 Ethernet
+
+# Pseudo devices.
+device		crypto			# core crypto support
+device		aesni			# AES-NI OpenCrypto module
+device		loop			# Network loopback
+device		ether			# Ethernet support
+device		vlan			# 802.1Q VLAN support
+device		tuntap			# Packet tunnel.
+device		md			# Memory "disks"
+device		firmware		# firmware assist module
+device		xz			# lzma decompression
+
+# The `bpf' device enables the Berkeley Packet Filter.
+# Be aware of the administrative consequences of enabling this!
+# Note that 'bpf' is required for DHCP.
+device		bpf			# Berkeley packet filter
+
+# USB support
+options 	USB_DEBUG		# enable debug msgs
+device		uhci			# UHCI PCI->USB interface
+device		ohci			# OHCI PCI->USB interface
+device		ehci			# EHCI PCI->USB interface (USB 2.0)
+device		xhci			# XHCI PCI->USB interface (USB 3.0)
+device		usb			# USB Bus (required)
+
+# Sound support
+device		sound			# Generic sound driver (required)
+device		snd_hda			# Intel High Definition Audio
+
+# VirtIO support
+device		virtio			# Generic VirtIO bus (required)
+device		virtio_pci		# VirtIO PCI device
+device		vtnet			# VirtIO Ethernet device
+device		virtio_blk		# VirtIO Block device
+device		virtio_scsi		# VirtIO SCSI device
+device		virtio_balloon		# VirtIO Memory Balloon device
+
+# Linux KVM paravirtualization support
+device		kvm_clock		# KVM paravirtual clock driver
+
+# evdev interface
+options 	EVDEV_SUPPORT		# evdev support in legacy drivers
+device		evdev			# input event device support
+device		uinput			# install /dev/uinput cdev
+
+# HID support
+options 	HID_DEBUG		# enable debug msgs
+device		hid			# Generic HID support
+device		hidbus			# Generic HID Bus
+options 	IICHID_SAMPLING		# Workaround missing GPIO INTR support
+
+#
+nomakeoptions	MODULES_OVERRIDE
+makeoptions	MODULES_OVERRIDE+="agp"
+makeoptions	MODULES_OVERRIDE+="backlight"  # for linuxkpi
+makeoptions	MODULES_OVERRIDE+="bridgestp"  # for if_bridge
+makeoptions	MODULES_OVERRIDE+="cpuctl"
+makeoptions	MODULES_OVERRIDE+="cryptodev"
+makeoptions	MODULES_OVERRIDE+="dtrace"
+makeoptions	MODULES_OVERRIDE+="ext2fs"
+makeoptions	MODULES_OVERRIDE+="fdescfs"
+makeoptions	MODULES_OVERRIDE+="fusefs"
+makeoptions	MODULES_OVERRIDE+="geom/geom_nop"
+makeoptions	MODULES_OVERRIDE+="hid/hkbd"
+makeoptions	MODULES_OVERRIDE+="hwpmc"
+makeoptions	MODULES_OVERRIDE+="i2c/if_ic i2c/iic i2c/iicbb i2c/iicbus"
+makeoptions	MODULES_OVERRIDE+="if_bridge"
+makeoptions	MODULES_OVERRIDE+="if_ovpn"
+makeoptions	MODULES_OVERRIDE+="if_wg"
+makeoptions	MODULES_OVERRIDE+="imgact_binmisc"
+makeoptions	MODULES_OVERRIDE+="krpc"
+makeoptions	MODULES_OVERRIDE+="ksyms"
+makeoptions	MODULES_OVERRIDE+="libmchain"
+makeoptions	MODULES_OVERRIDE+="lindebugfs"
+makeoptions	MODULES_OVERRIDE+="linprocfs"
+makeoptions	MODULES_OVERRIDE+="linuxkpi"
+makeoptions	MODULES_OVERRIDE+="linuxkpi_hdmi"
+makeoptions	MODULES_OVERRIDE+="linuxkpi_video"
+makeoptions	MODULES_OVERRIDE+="linux_common"
+makeoptions	MODULES_OVERRIDE+="mqueue"
+makeoptions	MODULES_OVERRIDE+="msdosfs_iconv"
+makeoptions	MODULES_OVERRIDE+="nfscl nfsd"
+makeoptions	MODULES_OVERRIDE+="nmdm"
+makeoptions	MODULES_OVERRIDE+="nvram"
+makeoptions	MODULES_OVERRIDE+="opensolaris"
+makeoptions	MODULES_OVERRIDE+="ossl"
+makeoptions	MODULES_OVERRIDE+="pf pflog"
+makeoptions	MODULES_OVERRIDE+="rc4"
+makeoptions	MODULES_OVERRIDE+="smbfs"
+makeoptions	MODULES_OVERRIDE+="snp"
+makeoptions	MODULES_OVERRIDE+="udf udf_iconv"
+makeoptions	MODULES_OVERRIDE+="unionfs"
+makeoptions	MODULES_OVERRIDE+="usb/uchcom"
+makeoptions	MODULES_OVERRIDE+="usb/ucom"
+makeoptions	MODULES_OVERRIDE+="usb/uftdi"
+makeoptions	MODULES_OVERRIDE+="usb/uhid"
+makeoptions	MODULES_OVERRIDE+="usb/ukbd"
+makeoptions	MODULES_OVERRIDE+="usb/umass"
+makeoptions	MODULES_OVERRIDE+="usb/ums"
+makeoptions	MODULES_OVERRIDE+="usb/uplcom"
+makeoptions	MODULES_OVERRIDE+="usb/usbhid"
+makeoptions	MODULES_OVERRIDE+="vkbd"
+# makeoptions	MODULES_OVERRIDE+="zfs"
+makeoptions	MODULES_OVERRIDE+="zlib"
+
+options 	HZ=100
+
+options 	NULLFS			# NULL filesystem
+
+options 	CD9660_ICONV
+
+options 	LIBICONV
+
+options 	TEKEN_UTF8		# UTF-8 output handling
+
+nooptions 	GEOM_PART_EBR
+nooptions 	GEOM_PART_EBR_COMPAT
+
+device		atacore			# Core ATA functionality
+device		atapci			# PCI bus support; only generic chipset support
+device		ataintel		# Intel
+
+# SMB bus
+device		smbus			# Bus support, required for smb below.
+device		smb			# standard I/O through /dev/smb*
+device		intpm			# Intel PIIX4 (82371AB, 82443MX) Power Management Unit
+
+# VirtIO support
+device		virtio_random		# VirtIO Entropy device
+device		virtio_gpu		# VirtIO GPU device
+device		virtio_console		# VirtIO Console device

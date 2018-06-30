@@ -1,0 +1,89 @@
+# based on: head/sys/arm64/conf/GENERIC aa39abd8e58f6559ad87ac7e9de2096c202ccce2
+
+cpu		ARM64
+ident		MYVIRTHW
+
+include		"std.arm64"
+include		"std.dev"
+
+# Include SoC specific configuration
+include		"std.virt"
+
+
+# std.arm64
+nooptions 	NUMA			# Non-Uniform Memory Architecture support
+nooptions 	VIMAGE			# Subsystem virtualization, e.g. VNET
+nooptions 	IPSEC_SUPPORT		# Allow kldload of ipsec and tcpmd5
+nooptions 	ROUTE_MPATH		# Multipath routing support
+nooptions 	TCP_HHOOK		# hhook(9) framework for TCP
+nooptions 	UFS_GJOURNAL		# Enable gjournal-based UFS journaling
+nooptions 	QUOTA			# Enable disk quotas for UFS
+nooptions 	MD_ROOT			# MD is a potential root device
+nooptions 	NFS_ROOT		# NFS usable as /, requires NFSCL
+nooptions 	GEOM_RAID		# Soft RAID functionality.
+nooptions 	COMPAT_FREEBSD32	# Compatible with FreeBSD/arm
+nooptions 	COMPAT_FREEBSD11	# Compatible with FreeBSD11
+nooptions 	COMPAT_FREEBSD12	# Compatible with FreeBSD12
+nooptions 	RACCT			# Resource accounting framework
+nooptions 	RACCT_DEFAULT_TO_DISABLED # Set kern.racct.enable=0 by default
+nooptions 	RCTL			# Resource limits
+nooptions 	LINUX_BOOT_ABI		# Boot using booti command from U-Boot
+
+# std.arm64 - Kernel dump features.
+nooptions 	EKCD			# Support for encrypted kernel dumps
+nooptions 	DEBUGNET		# debugnet networking
+nooptions 	NETDUMP			# netdump(4) client support
+
+# std.dev - Bus drivers
+nooptions 	PCI_HP			# PCI-Express native HotPlug
+nooptions 	PCI_IOV			# PCI SR-IOV support
+
+# std.dev - Block devices
+nodevice	ahci
+
+# std.dev - NVM Express (NVMe) support
+nodevice	nvme			# base NVMe driver
+nooptions 	NVME_USE_NVD		# prefer the cam(4) based nda(4) driver
+nodevice	nvd			# expose NVMe namespaces as disks, depends on nvme
+
+# std.dev - Pseudo devices.
+nodevice	vlan			# 802.1Q VLAN support
+nodevice	gif			# IPv6 and IPv4 tunneling
+
+# std.dev - PCI/PCI-X/PCIe Ethernet NICs that use iflib infrastructure
+nodevice	iflib
+nodevice	em			# Intel PRO/1000 Gigabit Ethernet Family
+nodevice	ix			# Intel 10Gb Ethernet Family
+
+# std.dev - Netmap provides direct access to TX/RX rings on supported NICs
+nodevice	netmap			# netmap(4) support
+
+# std.dev - USB support
+nodevice	uhci			# UHCI USB interface
+
+# std.dev - Sound support
+nodevice	sound
+
+# std.virt - Block devices
+nodevice	pvscsi			# VMware PVSCSI
+
+# std.virt - PCI/PCI-X/PCIe Ethernet NICs that use iflib infrastructure
+nodevice	vmx			# VMware VMXNET3 Ethernet
+
+
+#
+nomakeoptions	MODULES_OVERRIDE
+makeoptions	MODULES_OVERRIDE+="cryptodev"
+makeoptions	MODULES_OVERRIDE+="libiconv"
+makeoptions	MODULES_OVERRIDE+="ossl"
+makeoptions	MODULES_OVERRIDE+="rc4"
+
+options 	HZ=100
+
+options 	NULLFS			# NULL filesystem
+
+options 	TEKEN_UTF8		# UTF-8 output handling
+
+# VirtIO support
+device		virtio_random		# VirtIO Entropy device
+device		virtio_console		# VirtIO Console device
