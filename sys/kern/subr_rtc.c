@@ -286,7 +286,7 @@ clock_schedule(device_t clockdev, u_int offsetns)
 }
 
 static int
-read_clocks(struct timespec *ts, bool debug_read)
+read_clocks(struct timespec *ts, bool debug_read, time_t base)
 {
 	struct rtc_instance *rtc;
 	int error;
@@ -296,7 +296,7 @@ read_clocks(struct timespec *ts, bool debug_read)
 	LIST_FOREACH(rtc, &rtc_list, rtc_entries) {
 		if ((error = CLOCK_GETTIME(rtc->clockdev, ts)) != 0)
 			continue;
-		if (ts->tv_sec < 0 || ts->tv_nsec < 0) {
+		if (ts->tv_sec < 0 || ts->tv_nsec < 0 || ts->tv_sec < base) {
 			error = EINVAL;
 			continue;
 		}
@@ -333,7 +333,7 @@ inittodr(time_t base)
 	struct timespec ts;
 	int error;
 
-	error = read_clocks(&ts, false);
+	error = read_clocks(&ts, false, base);
 
 	/*
 	 * Do not report errors from each clock; it is expected that some clocks
@@ -410,7 +410,7 @@ sysctl_clock_do_io(SYSCTL_HANDLER_ARGS)
 
 	switch (value) {
 	case CLOCK_DBG_READ:
-		if (read_clocks(&ts_discard, true) == ENXIO)
+		if (read_clocks(&ts_discard, true, 0) == ENXIO)
 			printf("No registered RTC clocks\n");
 		break;
 	case CLOCK_DBG_WRITE:
