@@ -1,0 +1,56 @@
+
+update kernel
+  mount -u -o rw,noatime /
+  cd /usr/src/tools/tools/guy
+  ./src.sh update-kernel
+  shutdown -r now
+
+
+update kernel cleanup
+  mount -u -o rw,noatime /
+  cd /usr/src/tools/tools/guy
+  ./src.sh update-kernel-cleanup
+  mount -u -o ro,noatime /
+
+
+update world
+  mount -u -o rw,noatime /
+  shutdown now
+  cd /usr/src/tools/tools/guy
+  ./src.sh update-world
+  reboot
+
+
+update world cleanup
+  mount -u -o rw,noatime /
+  cd /usr/src/tools/tools/guy
+  ./src.sh update-world-cleanup
+  mount -u -o ro,noatime /
+
+
+update chroot
+  export DESTDIR=...
+  ./src.sh update-chroot
+
+
+update pmbr + gptboot
+  disk=...
+  gpart bootcode -b /boot/pmbr -f x $disk
+  gpart bootcode -p /boot/gptboot -i 1 -f x $disk
+  gpart commit $disk
+
+
+update EFI aarch64
+  mount -u -orw,noatime /boot/ESP
+  install -c /boot/loader.efi /boot/ESP/EFI/BOOT/BOOTAA64.EFI
+  mount -u -oro,noatime /boot/ESP
+
+update EFI amd64
+  mount -u -orw,noatime /boot/ESP
+  install -c /boot/loader.efi /boot/ESP/EFI/BOOT/BOOTX64.EFI
+  mount -u -oro,noatime /boot/ESP
+
+update EFI armv7
+  mount -u -orw,noatime /boot/ESP
+  install -c /boot/loader.efi /boot/ESP/EFI/BOOT/BOOTARM.EFI
+  mount -u -oro,noatime /boot/ESP
