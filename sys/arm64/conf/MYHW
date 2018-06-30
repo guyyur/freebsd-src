@@ -1,0 +1,145 @@
+# based on:
+#   GENERIC 602d3601863de3a4234ac24d3ebb5d85fe380664
+#   std.arm64 1aad58b919d3d22f86be01b8e26a203cd020eaae
+#   std.dev 64b530b38be37ebf32596a5ee7ab95f484f49176
+#   std.allwinner c4530dfff495c588cc9ba4faaf0fa8fddfd57441
+#   std.arm 9d09051e261c7020e5aa933c6aa1c2d84ebd0457
+#   std.broadcom 589951c76a3ff5d3b1105af03d66e676c83dbffc
+#   std.rockchip 1f1894ed341519ced3d94c470c2cd01527af0902
+
+cpu		ARM64
+ident		MYHW
+
+include		"std.arm64"
+include		"std.dev"
+
+# Include SoC specific configuration
+include		"std.allwinner"
+# include		"std.arm"
+include		"std.broadcom"
+include		"std.rockchip"
+
+
+# std.arm64
+nooptions 	NUMA			# Non-Uniform Memory Architecture support
+nooptions 	VIMAGE			# Subsystem virtualization, e.g. VNET
+nooptions 	IPSEC_SUPPORT		# Allow kldload of ipsec and tcpmd5
+nooptions 	IPSEC_OFFLOAD		# Inline ipsec offload infra
+nooptions 	ROUTE_MPATH		# Multipath routing support
+nooptions 	TCP_HHOOK		# hhook(9) framework for TCP
+nooptions 	UFS_GJOURNAL		# Enable gjournal-based UFS journaling
+nooptions 	QUOTA			# Enable disk quotas for UFS
+nooptions 	MD_ROOT			# MD is a potential root device
+nooptions 	NFS_ROOT		# NFS usable as /, requires NFSCL
+nooptions 	CD9660			# ISO 9660 Filesystem
+nooptions 	GEOM_RAID		# Soft RAID functionality.
+nooptions 	COMPAT_FREEBSD32	# Compatible with FreeBSD/arm
+# nooptions 	COMPAT_FREEBSD11	# Compatible with FreeBSD11 (needed for librsvg2-rust)
+# nooptions 	COMPAT_FREEBSD12	# Compatible with FreeBSD12
+# nooptions 	COMPAT_FREEBSD13	# Compatible with FreeBSD13
+nooptions 	RACCT			# Resource accounting framework
+nooptions 	RACCT_DEFAULT_TO_DISABLED # Set kern.racct.enable=0 by default
+nooptions 	RCTL			# Resource limits
+nooptions 	LINUX_BOOT_ABI		# Boot using booti command from U-Boot
+
+# std.arm64 - Kernel dump features.
+nooptions 	EKCD			# Support for encrypted kernel dumps
+nooptions 	DEBUGNET		# debugnet networking
+nooptions 	NETDUMP			# netdump(4) client support
+
+# std.dev - Bus drivers
+nooptions 	PCI_HP			# PCI-Express native HotPlug
+nooptions 	PCI_IOV			# PCI SR-IOV support
+
+# std.dev - Block devices
+nodevice	ahci
+
+# std.dev - ATA/SCSI peripherals
+nodevice	cd			# CD
+
+# std.dev - NVM Express (NVMe) support
+nodevice	nvme			# base NVMe driver
+nooptions 	NVME_USE_NVD		# prefer the cam(4) based nda(4) driver
+nodevice	nvd			# expose NVMe namespaces as disks, depends on nvme
+
+# std.dev - Pseudo devices.
+nodevice	gif			# IPv6 and IPv4 tunneling
+
+# std.dev - PCI/PCI-X/PCIe Ethernet NICs that use iflib infrastructure
+nodevice	iflib
+nodevice	em			# Intel PRO/1000 Gigabit Ethernet Family
+nodevice	ix			# Intel 10Gb Ethernet Family
+
+# std.dev - Netmap provides direct access to TX/RX rings on supported NICs
+nodevice	netmap			# netmap(4) support
+
+# std.dev - USB support
+nodevice	uhci			# UHCI USB interface
+
+# std.dev - Sound support
+nodevice	sound
+
+# std.allwinner - SoC support
+nooptions 	SOC_ALLWINNER_A64
+nooptions 	SOC_ALLWINNER_H6
+
+# std.allwinner - USB support
+nodevice	musb			# Mentor Graphics USB OTG controller
+nodevice	aw_dwc3			# Allwinner DWC3 controller
+
+# std.allwinner - Sound support
+nodevice	a10_codec               # Allwinner A10 codec
+nodevice	aw_i2s                  # Allwinner I2S
+nodevice	a33_codec               # Allwinner A33 codec
+nodevice	a64_codec               # Allwinner A64 Analog codec
+
+# std.arm - Bus drivers
+nodevice	pci_n1sdp		# ARM Neoverse N1 SDP PCI
+
+# std.broadcom - SoC support
+nooptions 	SOC_BRCM_BCM2837
+nooptions 	SOC_BRCM_NS2
+
+# std.broadcom - USB ethernet support
+nodevice	muge
+nodevice	smsc
+
+# std.rockchip - SoC support
+nooptions 	SOC_ROCKCHIP_RK3568
+
+# std.rockchip - Ethernet NICs
+nodevice	eqos			# Synopsys Designware Ethernet QoS controller
+
+# std.rockchip - Power management controllers
+nodevice	rk817			# RockChip RK817 PMIC
+nodevice	syr827			# Silergy SYR827 PMIC
+nodevice	tcs4525			# TCS 4525 PMIC
+
+#
+nomakeoptions	MODULES_OVERRIDE
+makeoptions	MODULES_OVERRIDE+="cryptodev"
+makeoptions	MODULES_OVERRIDE+="dtb/allwinner"
+makeoptions	MODULES_OVERRIDE+="dtb/rockchip"
+makeoptions	MODULES_OVERRIDE+="dtb/rpi"
+makeoptions	MODULES_OVERRIDE+="fdescfs"
+makeoptions	MODULES_OVERRIDE+="if_ovpn"
+makeoptions	MODULES_OVERRIDE+="if_wg"
+makeoptions	MODULES_OVERRIDE+="libiconv"
+makeoptions	MODULES_OVERRIDE+="ossl"
+makeoptions	MODULES_OVERRIDE+="pf pflog"
+makeoptions	MODULES_OVERRIDE+="rc4"
+makeoptions	MODULES_OVERRIDE+="usb/axge"
+makeoptions	MODULES_OVERRIDE+="usb/cdce"
+makeoptions	MODULES_OVERRIDE+="usb/uchcom"
+makeoptions	MODULES_OVERRIDE+="usb/ucom"
+makeoptions	MODULES_OVERRIDE+="usb/uether"
+# makeoptions	MODULES_OVERRIDE+="usb/umass"
+makeoptions	MODULES_OVERRIDE+="usb/uplcom"
+makeoptions	MODULES_OVERRIDE+="usb/ure"
+
+options 	NULLFS			# NULL filesystem
+
+options 	TEKEN_UTF8		# UTF-8 output handling
+
+# Ethernet NICs
+device		re			# RealTek 8139C+/8169/8169S/8110S
