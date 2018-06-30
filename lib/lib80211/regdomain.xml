@@ -1611,7 +1611,7 @@
   <isocc>372</isocc> <name>Ireland</name> <rd ref="etsi"/>
 </country>
 <country id="IL">
-  <isocc>376</isocc> <name>Israel</name> <rd ref="none"/>
+  <isocc>376</isocc> <name>Israel</name> <rd ref="etsi"/>
 </country>
 <country id="IT">
   <isocc>380</isocc> <name>Italy</name> <rd ref="etsi"/>
