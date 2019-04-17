@@ -16,8 +16,6 @@ LDIRS=	BSD_daemon \
 	find_interface \
 	flua \
 	indent \
-	ipfw \
-	jails \
 	kld \
 	libvgl \
 	mdoc \
@@ -25,13 +23,11 @@ LDIRS=	BSD_daemon \
 	oci \
 	perfmon \
 	ppi \
-	ppp \
 	printing \
 	ses \
 	scsi_target \
 	sound \
-	sunrpc \
-	ypldap
+	sunrpc
 
 
 SE_DIRS+=	BSD_daemon
@@ -102,9 +98,14 @@ SE_INDENT=	indent.pro
 SUBDIR+=	ipfilter
 .endif
 
+.if ${MK_IPFW} != "no"
+LDIRS+=		ipfw
 SE_DIRS+=	ipfw
 SE_IPFW=	change_rules.sh
+.endif
 
+.if ${MK_JAIL} != "no"
+LDIRS+=		jails
 SE_DIRS+=	jails
 SE_JAILS= \
 	README \
@@ -114,6 +115,7 @@ SE_JAILS= \
 	jng \
 	rc.conf.jails \
 	rcjail.xxx.conf
+.endif
 
 SE_DIRS+=	kld
 SE_KLD=	Makefile
@@ -232,6 +234,8 @@ SE_PPI= \
 	Makefile \
 	ppilcd.c
 
+.if ${MK_PPP} != "no"
+LDIRS+=		ppp
 SE_DIRS+=	ppp
 SE_PPP= \
 	chap-auth \
@@ -248,6 +252,7 @@ SE_PPP= \
 	ppp.secret.sample \
 	ppp.secret.span-isp \
 	ppp.secret.span-isp.working
+.endif
 
 SE_DIRS+=	printing
 SE_PRINTING= \
@@ -356,8 +361,11 @@ SE_DIRS+=	uefisign
 SE_UEFISIGN=	uefikeys
 .endif
 
+.if ${MK_NIS} != "no"
+LDIRS+=		ypldap
 SE_DIRS+=	ypldap
 SE_YPLDAP=	ypldap.conf
+.endif
 
 .if ${MK_HAST} != "no"
 LDIRS+=		hast
