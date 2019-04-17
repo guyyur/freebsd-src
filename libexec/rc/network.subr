@@ -296,6 +296,25 @@ get_if_var()
 	eval echo \${${prefix}${_if}${suffix}-${_default}}
 }
 
+# get_iflist_after_rename iflist
+#	Return the interface list after replacing the old name
+#	with the new name for each renamed interface.
+get_iflist_after_rename()
+{
+	local _iflist _if _ifname _tmplist
+
+	_iflist=$*
+	_tmplist=
+	for _if in $_iflist; do
+		_ifname=`get_if_var $_if ifconfig_IF_name`
+		if [ -z "$_ifname" ]; then
+			_ifname=$_if
+		fi
+		_tmplist="${_tmplist} ${_ifname}"
+	done
+	echo "${_tmplist# }"
+}
+
 # _ifconfig_getargs if [af]
 #	Prints the arguments for the supplied interface to stdout.
 #	Returns 1 if empty.  In general, ifconfig_getargs should be used
