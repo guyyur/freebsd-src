@@ -76,6 +76,9 @@ netif_start()
 	# Rename interfaces.
 	ifnet_rename $cmdifn
 
+	# Update after rename.
+	cmdifn="`get_iflist_after_rename $cmdifn`"
+
 	# Configure the interface(s).
 	netif_common ifn_start $cmdifn
 
