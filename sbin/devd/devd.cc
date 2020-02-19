@@ -662,7 +662,7 @@ config::shell_quote(const string &s)
 	buffer += '$';
 	buffer += '\'';
 	cs = s.c_str();
-	ce = cs + strlen(cs);
+	ce = cs + s.length();
 	for (; cs < ce; cs++) {
 		c = *cs;
 		if (c == '\'' || c == '\\') {
