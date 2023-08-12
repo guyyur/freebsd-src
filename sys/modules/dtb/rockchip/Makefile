@@ -14,6 +14,7 @@ DTS=	\
 	rockchip/rk3399-nanopi-r4s.dts \
 	rockchip/rk3399-rock-4c-plus.dts \
 	rockchip/rk3399-rock-pi-4.dts \
+	rockchip/rk3328-orangepi-r1-plus.dts \
 	rockchip/rk3328-rock-pi-e.dts \
 	rockchip/rk3328-rock64.dts \
 	rockchip/rk3399-firefly.dts \
